@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: employee-service
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+
+server.port: 8081
+
+springdoc:
+  api-docs:
+    path: /employee-openapi
+
+
+
