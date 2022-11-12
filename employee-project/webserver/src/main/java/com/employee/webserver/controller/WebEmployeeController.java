@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,7 @@ public class WebEmployeeController {
 
     @RequestMapping("/employee")
     public Employee[] getAllEmployees (Model model){
-       return employeeService.getAllEmployees();
+       return employeeService.getAllEmployee();
     }
 
     @RequestMapping("/employees/id/{id}")
@@ -34,9 +35,8 @@ public class WebEmployeeController {
     }
 
     @RequestMapping("/employees")
-    public Employee [] getAllEmployees (){
-        Employee[] employee = employeeService.getAllEmployees();
+    public ResponseEntity<Employee> getAllEmployees () throws IOException {
+        ResponseEntity<Employee> employee = employeeService.getAllEmployees();
         return employee;
     }
-
 }

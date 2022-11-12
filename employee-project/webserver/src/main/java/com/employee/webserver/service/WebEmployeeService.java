@@ -5,11 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -27,7 +27,8 @@ public class WebEmployeeService {
 
 
     public Employee[] getAllEmployee(){
-        return restTemplate.getForObject("http://EMPLOYEE-SERVICE/api/v1/employees", Employee[].class);
+       // return restTemplate.getForObject("http://EMPLOYEE-SERVICE/api/v1/employees", Employee[].class);
+        return restTemplate.getForObject("http://EMPLOYEE-ZUUL-SERVICE/producer/api/v1/employees", Employee[].class);
 
     }
 
@@ -44,11 +45,18 @@ public class WebEmployeeService {
         return serviceInstance;
     }
 
-
-    public Employee[] getAllEmployees(){
+    public ResponseEntity<Employee> getAllEmployees() throws IOException {
         String baseUrl = getServiceInstance().getUri().toString();
         baseUrl = baseUrl + "/producer"+apiVersion+"employees";
-        return restTemplate.getForObject(baseUrl , Employee[].class);
+        //RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Employee> response = restTemplate.exchange(baseUrl, HttpMethod.GET, getHeaders(), Employee.class);
+        return response;
 
+    }
+
+    private static HttpEntity<?> getHeaders() throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+        return new HttpEntity<>(headers);
     }
 }
